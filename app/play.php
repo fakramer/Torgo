@@ -36,7 +36,7 @@
             <h4 class="float-right">Score: <span id="score"></span></h4>
             <h2><?php echo $team_name; ?></h2>
             
-            <a href="index.php?logout" id="a-change-name">Change Team Name</a>
+            <a href="index.php?logout" id="a-change-name">Change team name</a>
 
             <div class="form-group">
                 <label for="submission">Submission</label>
@@ -94,7 +94,7 @@
                 setInterval(() => {
                     $.get('api/view-messages.php', data => {
 
-                        const response = JSON.parse(data);
+                        const response = data;
                         const { messages, score } = response;
 
                         $('#score').html(score);
