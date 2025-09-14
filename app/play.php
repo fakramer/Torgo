@@ -94,7 +94,7 @@
                 setInterval(() => {
                     $.get('api/view-messages.php', data => {
 
-                        const response = data;
+                        const response = JSON.parse(data);
                         const { messages, score } = response;
 
                         $('#score').html(score);
