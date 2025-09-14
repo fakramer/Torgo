@@ -92,32 +92,36 @@
                 });
                
                 setInterval(() => {
-                    $.get('api/view-messages.php', data => {
+                    $.ajax({
+                        url: 'api/view-messages.php',
+                        method: 'GET',
+                        cache: false,
+                        success: data => {
+                            const response = JSON.parse(data);
+                            const { messages, score } = response;
 
-                        const response = JSON.parse(data);
-                        const { messages, score } = response;
-
-                        $('#score').html(score);
-
-                        if (messages.length > 0)
-                            $('#a-change-name').prop('hidden', true);
-
-                        messageLogHtml = '';
-                        $.each(messages, (index, value) => {
-                            const { text, score } = value;
-
-                            senderClass = value['sender'] === "<?php echo $team_name; ?>" ? 'my-message' : 'other-message';
-                            const displayText = formatMessage(text, score);
-                            messageLogHtml = '<li class="list-group-item"><p class="' + senderClass + '">' + displayText + '</p></li>' + messageLogHtml;
-                        });
-
-                        $('#message-log').html(messageLogHtml);
-
-                        if ($('#submission').prop('disabled')) {
-                            $('#btn-send').html('Send');
-                            $('#btn-send').prop('disabled', false);
-                            $('#submission').prop('disabled', false);
-                            $('#submission').val('');
+                            $('#score').html(score);
+    
+                            if (messages.length > 0)
+                                $('#a-change-name').prop('hidden', true);
+    
+                            messageLogHtml = '';
+                            $.each(messages, (index, value) => {
+                                const { text, score } = value;
+    
+                                senderClass = value['sender'] === "<?php echo $team_name; ?>" ? 'my-message' : 'other-message';
+                                const displayText = formatMessage(text, score);
+                                messageLogHtml = '<li class="list-group-item"><p class="' + senderClass + '">' + displayText + '</p></li>' + messageLogHtml;
+                            });
+    
+                            $('#message-log').html(messageLogHtml);
+    
+                            if ($('#submission').prop('disabled')) {
+                                $('#btn-send').html('Send');
+                                $('#btn-send').prop('disabled', false);
+                                $('#submission').prop('disabled', false);
+                                $('#submission').val('');
+                            }
                         }
                     });
                 }, 3000);

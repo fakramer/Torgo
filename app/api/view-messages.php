@@ -36,6 +36,11 @@
         
         return 0;
     }
+    
+    // Set headers to prevent caching
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Cache-Control: post-check=0, pre-check=0', false);
+    header('Pragma: no-cache');
 
     $teamName = $_COOKIE['teamName'];
 
@@ -48,7 +53,8 @@
 
     $response = array(
         'messages' => get_messages($link, $teamName),
-        'score' => get_score($link, $teamName) 
+        'score' => get_score($link, $teamName),
+        'teamName' => $teamName,
     );
     
     print(json_encode($response));

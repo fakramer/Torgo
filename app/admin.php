@@ -254,47 +254,53 @@
                 });
                 
                 setInterval(() => {
-                    $.get('api/view-messages.php', { name: 'DJ Torgo' }, data => {
+                    $.ajax({
+                        url: 'api/view-messages.php',
+                        method: 'GET',
+                        data: { name: 'DJ Torgo' },
+                        cache: false,
+                        success: data => {
 
-                        const response = JSON.parse(data);
-                        const messages = response.messages;
-
-                        $.each(messages, (index, value) => {
-                            const { id, sender, text, score } = value;
-                            const team = (sender === 'DJ Torgo') ? value['recipient'] : sender;
-                            const formattedText = formatMessage(text, score);
-
-                            let teamInterface = $('#message-log').find('li.team-interface[data-team="' + team + '"]')[0];
-
-                            if (typeof teamInterface === 'undefined') {
-                                $('#message-log').append(teamInterfaceHtml(team));
-                                teamInterface = $('#message-log').find('li.team-interface[data-team="' + team + '"]')[0];
-                            }
-                            
-                            let message = $(teamInterface).find('li.message[data-message-id="' + id + '"]')[0];
-
-                            if (typeof message === 'undefined') {
-                                if (sender === 'DJ Torgo') {
-                                    if (score) {
-                                        const teamScore = $(teamInterface).find('.teamScore');
-                                        teamScore.html(Number(teamScore.html()) + Number(score));
-                                        console.log(teamScore.html());
+                            const response = JSON.parse(data);
+                            const messages = response.messages;
+    
+                            $.each(messages, (index, value) => {
+                                const { id, sender, text, score } = value;
+                                const team = (sender === 'DJ Torgo') ? value['recipient'] : sender;
+                                const formattedText = formatMessage(text, score);
+    
+                                let teamInterface = $('#message-log').find('li.team-interface[data-team="' + team + '"]')[0];
+    
+                                if (typeof teamInterface === 'undefined') {
+                                    $('#message-log').append(teamInterfaceHtml(team));
+                                    teamInterface = $('#message-log').find('li.team-interface[data-team="' + team + '"]')[0];
+                                }
+                                
+                                let message = $(teamInterface).find('li.message[data-message-id="' + id + '"]')[0];
+    
+                                if (typeof message === 'undefined') {
+                                    if (sender === 'DJ Torgo') {
+                                        if (score) {
+                                            const teamScore = $(teamInterface).find('.teamScore');
+                                            teamScore.html(Number(teamScore.html()) + Number(score));
+                                            console.log(teamScore.html());
+                                        }
+    
+                                        $(teamInterface).find('.message-list').prepend('<li class="list-group-item message torgo-message" data-message-id="' + id + '">' + formattedText + '</li>');
+                                        $(teamInterface).find('.new-messages').html('0');
+                                        $(teamInterface).find('.new-messages').addClass('badge-secondary');
+                                        $(teamInterface).find('.new-messages').removeClass('badge-danger');
                                     }
-
-                                    $(teamInterface).find('.message-list').prepend('<li class="list-group-item message torgo-message" data-message-id="' + id + '">' + formattedText + '</li>');
-                                    $(teamInterface).find('.new-messages').html('0');
-                                    $(teamInterface).find('.new-messages').addClass('badge-secondary');
-                                    $(teamInterface).find('.new-messages').removeClass('badge-danger');
+                                    else {
+                                        $(teamInterface).find('.message-list').prepend('<li class="list-group-item message" data-message-id="' + id + '">' + text + '</li>');
+                                        const newMessages = parseInt($(teamInterface).find('.new-messages').html());
+                                        $(teamInterface).find('.new-messages').html(newMessages + 1);
+                                        $(teamInterface).find('.new-messages').addClass('badge-danger');
+                                        $(teamInterface).find('.new-messages').removeClass('badge-secondary');
+                                    }
                                 }
-                                else {
-                                    $(teamInterface).find('.message-list').prepend('<li class="list-group-item message" data-message-id="' + id + '">' + text + '</li>');
-                                    const newMessages = parseInt($(teamInterface).find('.new-messages').html());
-                                    $(teamInterface).find('.new-messages').html(newMessages + 1);
-                                    $(teamInterface).find('.new-messages').addClass('badge-danger');
-                                    $(teamInterface).find('.new-messages').removeClass('badge-secondary');
-                                }
-                            }
-                        });
+                            });
+                        }
                     });
                 }, 3000);
             });
